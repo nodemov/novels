@@ -2,16 +2,15 @@
 
 use App\Models\Chapter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
-   return redirect()->route("novels");
+    return redirect()->route("novels");
 });
 
 Route::get('get_novel', function () {
     ini_set('max_execution_time', 300); //5 minutes
-    $urls = [
-
-    ];
+    $urls = [];
 
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
@@ -83,4 +82,21 @@ Route::get('novels', function () {
 Route::get('novels/get', function () {
     $chapters = Chapter::where('id', 8646)->get();
     return view('novel', compact('chapters'));
+});
+
+Route::get('clear', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
+
+    // Artisan::call('view:cache');
+    Artisan::call('config:cache');
+
+    return "Cache is cleared and view:cache config:cache";
+});
+
+Route::get('optimize', function () {
+    Artisan::call('optimize:clear');
+
+    return "Cache is cache and config:cache";
 });
