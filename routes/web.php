@@ -71,7 +71,8 @@ Route::get('geturl', function () {
 
 Route::get('novels', function () {
     $chapters = Chapter::where('novel_id', 2)
-        ->where('chapter', '>=', 2070)
+        ->where('chapter', '>=', 2041)
+        ->where('chapter', '<', 2130)
         ->orderBy('chapter')
         ->paginate(10);
 
