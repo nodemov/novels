@@ -17,8 +17,8 @@
                                 @foreach ($chapters as $item)
                                     <h1>
                                         {{-- echo substr("Battling Records of the Chosen One บันทึกศึกผู้กล้าท้าสวรรค์ - ตอนที่ 1010 อานุภาพไร้ขอบเขต",34); --}}
-                                        {{ substr($item->title, 23) }}
-                                        {{-- {{ $item->title }} --}}
+                                        {{-- {{ substr($item->title, 6) }} --}}
+                                        {{ $item->title }}
                                     </h1>
                                     <p style="font-size: 14px">
                                         {{-- {{ substr($item->content,14) }} --}}

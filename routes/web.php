@@ -10,11 +10,12 @@ Route::get('/', function () {
 
 Route::get('get_novel', function () {
     ini_set('max_execution_time', 300); //5 minutes
-    $urls = [];
+    $urls = [
+    ];
 
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
-    $novel_id = 2;
+    $novel_id = 14;
 
     foreach ($urls as $url) {
         try {
@@ -70,11 +71,11 @@ Route::get('geturl', function () {
 });
 
 Route::get('novels', function () {
-    $chapters = Chapter::where('novel_id', 2)
-        ->where('chapter', '>=', 2041)
-        ->where('chapter', '<', 2130)
+    $chapters = Chapter::where('novel_id', 14)
+        // ->where('chapter', '>=', 2041)
+        // ->where('chapter', '<', 2130)
         ->orderBy('chapter')
-        ->paginate(10);
+        ->paginate(15);
 
     // return $chapters;
     return view('novels', compact('chapters'));
