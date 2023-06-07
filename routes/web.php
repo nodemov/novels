@@ -75,7 +75,7 @@ Route::get('novels', function () {
         // ->where('chapter', '>=', 2041)
         // ->where('chapter', '<', 2130)
         ->orderBy('chapter')
-        ->paginate(15);
+        ->paginate(20);
 
     // return $chapters;
     return view('novels', compact('chapters'));
