@@ -1,17 +1,17 @@
 <?php
 
 use App\Models\Chapter;
+use App\Models\Novel;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 
 Route::get('/', function () {
-    return redirect()->route("novels");
+    return ['status' => false, 'message' => "Is commimg"];
 });
 
 Route::get('get_novel', function () {
     ini_set('max_execution_time', 300); //5 minutes
-    $urls = [
-    ];
+    $urls = [];
 
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
@@ -70,16 +70,24 @@ Route::get('geturl', function () {
     });
 });
 
-Route::get('novels', function () {
-    $chapters = Chapter::where('novel_id', 14)
+Route::get('novels/{id}', function ($id) {
+    $chapters = Chapter::where('novel_id', $id)
         // ->where('chapter', '>=', 2041)
         // ->where('chapter', '<', 2130)
         ->orderBy('chapter')
         ->paginate(20);
 
     // return $chapters;
-    return view('novels', compact('chapters'));
+    return view('novel', compact('chapters'));
+})->name('novel.show');
+
+Route::get('novels', function () {
+    $novels = Novel::withCount('chapters')->get();
+
+    // return $novels;
+    return view('novels', compact('novels'));
 })->name('novels');
+
 
 Route::get('novels/get', function () {
     $chapters = Chapter::where('id', 8646)->get();
