@@ -57,7 +57,7 @@
                                             </a>
                                         </div>
                                         <small
-                                            class="text-body-secondary">{{ $item->updated_at->diffForHumans() }}</small>
+                                            class="text-body-secondary">{{ $item->updated_at }}</small>
                                     </div>
                                 </div>
                             </div>

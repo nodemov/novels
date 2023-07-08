@@ -9,13 +9,18 @@ Route::get('/', function () {
     return ['status' => false, 'message' => "Is commimg"];
 });
 
+Route::get('url', function () {
+    return view('url');
+});
+
 Route::get('get_novel', function () {
     ini_set('max_execution_time', 300); //5 minutes
+
     $urls = [];
 
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
-    $novel_id = 14;
+    $novel_id = 28;
 
     foreach ($urls as $url) {
         try {
@@ -30,10 +35,8 @@ Route::get('get_novel', function () {
                 $chapter->chapter = $chapter_ch;
             });
 
-            // $crawler->filter('.read-container')->each(function ($node) use ($chapter) {
             $crawler->filter('.text-left')->each(function ($node) use ($chapter) {
                 $content = $node->text();
-                // dump($content);
                 $chapter->content = $content;
             });
             $chapter->save();
@@ -42,7 +45,6 @@ Route::get('get_novel', function () {
         } catch (\Throwable $th) {
             array_push($duplicateEntry, $chapter->title);
             continue;
-            // dd($th);
         }
     }
 
@@ -54,21 +56,91 @@ Route::get('get_novel', function () {
     return ["status" => " เพิ่มสำเร็จ"];
 });
 
-Route::get('geturl', function () {
-    $crawler = Goutte::request('GET', 'https://novel-lucky.com/novel/battling-records-of-the-chosen-one/%e0%b8%95%e0%b8%ad%e0%b8%99%e0%b8%97%e0%b8%b5%e0%b9%88-1011-%e0%b8%81%e0%b8%a3%e0%b8%b0%e0%b8%9a%e0%b8%a7%e0%b8%99%e0%b9%80%e0%b8%89%e0%b8%b7%e0%b8%ad%e0%b8%99%e0%b9%80%e0%b8%81%e0%b8%b4%e0%b8%94/');
+Route::get('get_novel1', function () {
+    ini_set('max_execution_time', 300); //5 minutes
+    $urls = [];
 
-    $crawler->filter('.short')->each(function ($node) {
-        // dump($node);
-        $title = $node->text();
-        dump($title);
-    });
+    $urls =  array_reverse($urls);
+    $duplicateEntry = [];
+    $novel_id = 12;
 
-    $crawler->filter('.short')->each(function ($node) {
-        // dump($node);
-        $title = $node->text();
-        dump($title);
-    });
+    foreach ($urls as $url) {
+        try {
+            $crawler = Goutte::request('GET', $url);
+            $chapter = new Chapter();
+            $chapter->novel_id = $novel_id;
+            $crawler->filter('#chapter-heading')->each(function ($node) use ($chapter) {
+                $title_novel = $node->text();
+                $chapter->title = $title_novel;
+                $title_novel_arr = explode("ที่ ", $title_novel);
+                $chapter_ch  = floatval(substr($title_novel_arr[1], 0, 8));
+                $chapter->chapter = $chapter_ch;
+            });
+
+            $crawler->filter('.text-left')->each(function ($node) use ($chapter) {
+                $content = $node->text();
+                $chapter->content = $content;
+            });
+            $chapter->save();
+
+            unset($crawler);
+        } catch (\Throwable $th) {
+            array_push($duplicateEntry, $chapter->title);
+            continue;
+        }
+    }
+
+    if (count($duplicateEntry) > 0) {
+        dump("ตรวจพบรายการที่พบในระบบ");
+        dump($duplicateEntry);
+    }
+
+    return ["status" => " เพิ่มสำเร็จ"];
 });
+
+
+Route::get('get_novel2', function () {
+    ini_set('max_execution_time', 300); //5 minutes
+    $urls = [];
+
+    $urls =  array_reverse($urls);
+    $duplicateEntry = [];
+    $novel_id = 26;
+
+    foreach ($urls as $url) {
+        try {
+            $crawler = Goutte::request('GET', $url);
+            $chapter = new Chapter();
+            $chapter->novel_id = $novel_id;
+            $crawler->filter('#chapter-heading')->each(function ($node) use ($chapter) {
+                $title_novel = $node->text();
+                $chapter->title = $title_novel;
+                $title_novel_arr = explode("ที่ ", $title_novel);
+                $chapter_ch  = floatval(substr($title_novel_arr[1], 0, 8));
+                $chapter->chapter = $chapter_ch;
+            });
+
+            $crawler->filter('.text-left')->each(function ($node) use ($chapter) {
+                $content = $node->text();
+                $chapter->content = $content;
+            });
+            $chapter->save();
+
+            unset($crawler);
+        } catch (\Throwable $th) {
+            array_push($duplicateEntry, $chapter->title);
+            continue;
+        }
+    }
+
+    if (count($duplicateEntry) > 0) {
+        dump("ตรวจพบรายการที่พบในระบบ");
+        dump($duplicateEntry);
+    }
+
+    return ["status" => " เพิ่มสำเร็จ"];
+});
+
 
 Route::get('novels/{id}', function ($id) {
     $chapters = Chapter::where('novel_id', $id)
