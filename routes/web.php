@@ -69,7 +69,8 @@ Route::get('novels/{id}', function ($id, Request $request) {
         })
         ->orderBy('chapter')
         ->orderBy('id')
-        ->paginate(20);
+        ->paginate(20)
+        ->withQueryString();
 
     // return $chapters;
     return view('novel', compact('chapters'));
