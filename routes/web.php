@@ -2,6 +2,7 @@
 
 use App\Models\Chapter;
 use App\Models\Novel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 
@@ -16,92 +17,9 @@ Route::get('url', function () {
 Route::get('get_novel', function () {
     ini_set('max_execution_time', 300); //5 minutes
 
-    $urls = [];
-
-    $urls =  array_reverse($urls);
-    $duplicateEntry = [];
-    $novel_id = 28;
-
-    foreach ($urls as $url) {
-        try {
-            $crawler = Goutte::request('GET', $url);
-            $chapter = new Chapter();
-            $chapter->novel_id = $novel_id;
-            $crawler->filter('#chapter-heading')->each(function ($node) use ($chapter) {
-                $title_novel = $node->text();
-                $chapter->title = $title_novel;
-                $title_novel_arr = explode("ที่ ", $title_novel);
-                $chapter_ch  = floatval(substr($title_novel_arr[1], 0, 8));
-                $chapter->chapter = $chapter_ch;
-            });
-
-            $crawler->filter('.text-left')->each(function ($node) use ($chapter) {
-                $content = $node->text();
-                $chapter->content = $content;
-            });
-            $chapter->save();
-
-            unset($crawler);
-        } catch (\Throwable $th) {
-            array_push($duplicateEntry, $chapter->title);
-            continue;
-        }
-    }
-
-    if (count($duplicateEntry) > 0) {
-        dump("ตรวจพบรายการที่พบในระบบ");
-        dump($duplicateEntry);
-    }
-
-    return ["status" => " เพิ่มสำเร็จ"];
-});
-
-Route::get('get_novel1', function () {
-    ini_set('max_execution_time', 300); //5 minutes
-    $urls = [];
-
-    $urls =  array_reverse($urls);
-    $duplicateEntry = [];
-    $novel_id = 12;
-
-    foreach ($urls as $url) {
-        try {
-            $crawler = Goutte::request('GET', $url);
-            $chapter = new Chapter();
-            $chapter->novel_id = $novel_id;
-            $crawler->filter('#chapter-heading')->each(function ($node) use ($chapter) {
-                $title_novel = $node->text();
-                $chapter->title = $title_novel;
-                $title_novel_arr = explode("ที่ ", $title_novel);
-                $chapter_ch  = floatval(substr($title_novel_arr[1], 0, 8));
-                $chapter->chapter = $chapter_ch;
-            });
-
-            $crawler->filter('.text-left')->each(function ($node) use ($chapter) {
-                $content = $node->text();
-                $chapter->content = $content;
-            });
-            $chapter->save();
-
-            unset($crawler);
-        } catch (\Throwable $th) {
-            array_push($duplicateEntry, $chapter->title);
-            continue;
-        }
-    }
-
-    if (count($duplicateEntry) > 0) {
-        dump("ตรวจพบรายการที่พบในระบบ");
-        dump($duplicateEntry);
-    }
-
-    return ["status" => " เพิ่มสำเร็จ"];
-});
-
-
-Route::get('get_novel2', function () {
-    ini_set('max_execution_time', 300); //5 minutes
-    $urls = [];
+    $urls = [
+        "xxx"
+    ];
 
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
@@ -141,12 +59,16 @@ Route::get('get_novel2', function () {
     return ["status" => " เพิ่มสำเร็จ"];
 });
 
-
-Route::get('novels/{id}', function ($id) {
+Route::get('novels/{id}', function ($id, Request $request) {
     $chapters = Chapter::where('novel_id', $id)
-        // ->where('chapter', '>=', 2041)
-        // ->where('chapter', '<', 2130)
+        ->when(request()->start, function ($q) use ($request) {
+            $q->where('chapter', '>=', $request->start);
+        })
+        ->when(request()->end, function ($q) use ($request) {
+            $q->where('chapter', '<=', $request->end);
+        })
         ->orderBy('chapter')
+        ->orderBy('id')
         ->paginate(20);
 
     // return $chapters;

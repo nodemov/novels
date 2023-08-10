@@ -22,7 +22,7 @@
                                     </h1>
                                     <p style="font-size: 14px">
                                         {{-- {{ substr($item->content,14) }} --}}
-                                        {{ $item->content }}
+                                        {{ trim($item->content) }}
                                     </p>
                                     <br>
                                 @endforeach
