@@ -17,13 +17,10 @@ Route::get('url', function () {
 Route::get('get_novel', function () {
     ini_set('max_execution_time', 300); //5 minutes
 
-    $urls = [
-        "xxx"
-    ];
-
+    $urls = [];
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
-    $novel_id = 26;
+    $novel_id = 39;
 
     foreach ($urls as $url) {
         try {
@@ -33,7 +30,7 @@ Route::get('get_novel', function () {
             $crawler->filter('#chapter-heading')->each(function ($node) use ($chapter) {
                 $title_novel = $node->text();
                 $chapter->title = $title_novel;
-                $title_novel_arr = explode("ที่ ", $title_novel);
+                $title_novel_arr = explode("ตอนที่ ", $title_novel);
                 $chapter_ch  = floatval(substr($title_novel_arr[1], 0, 8));
                 $chapter->chapter = $chapter_ch;
             });
@@ -72,8 +69,14 @@ Route::get('novels/{id}', function ($id, Request $request) {
         ->paginate(20)
         ->withQueryString();
 
+    if ($request->title) {
+        $showTitle = true;
+    } else {
+        $showTitle = false;
+    }
+
     // return $chapters;
-    return view('novel', compact('chapters'));
+    return view('novel', compact('chapters', 'showTitle'));
 })->name('novel.show');
 
 Route::get('novels', function () {
