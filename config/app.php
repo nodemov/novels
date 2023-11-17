@@ -42,6 +42,8 @@ return [
     |
     */
 
+    'config_cache' => env('APP_ENV') !== 'local',
+
     'debug' => (bool) env('APP_DEBUG', false),
 
     /*
@@ -168,6 +170,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+        Weidner\Goutte\GoutteServiceProvider::class,
+
     ])->toArray(),
 
     /*
@@ -183,6 +188,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        'Goutte' => Weidner\Goutte\GoutteFacade::class,
     ])->toArray(),
 
 ];

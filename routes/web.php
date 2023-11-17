@@ -18,29 +18,33 @@ Route::get('get_novel', function () {
     ini_set('max_execution_time', 300); //5 minutes
 
     $urls = [];
+
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
-    $novel_id = 39;
+    $novel_id = 8;
 
     foreach ($urls as $url) {
         try {
-            $crawler = Goutte::request('GET', $url);
+            $crawler = Weidner\Goutte\GoutteFacade::request('GET', $url);
             $chapter = new Chapter();
             $chapter->novel_id = $novel_id;
             $crawler->filter('#chapter-heading')->each(function ($node) use ($chapter) {
                 $title_novel = $node->text();
                 $chapter->title = $title_novel;
                 $title_novel_arr = explode("ตอนที่ ", $title_novel);
+                // $title_novel_arr = explode("บทที่ ", $title_novel);
                 $chapter_ch  = floatval(substr($title_novel_arr[1], 0, 8));
+                // dd($chapter_ch);
+                // dd($node->text());
                 $chapter->chapter = $chapter_ch;
             });
 
             $crawler->filter('.text-left')->each(function ($node) use ($chapter) {
                 $content = $node->text();
+                // dd($node->text());
                 $chapter->content = $content;
             });
             $chapter->save();
-
             unset($crawler);
         } catch (\Throwable $th) {
             array_push($duplicateEntry, $chapter->title);
