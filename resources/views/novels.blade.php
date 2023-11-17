@@ -7,7 +7,6 @@
     <title>GNovel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-
 </head>
 
 <body>
@@ -22,10 +21,10 @@
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Novels</a>
+                        <a class="nav-link" href="{{ route('novels') }}">Novels</a>
                     </li>
                 </ul>
             </div>
@@ -41,7 +40,7 @@
                     @foreach ($novels as $item)
                         <div class="col">
                             <div class="card shadow-sm">
-                                <img src="{{ Asset('assets/images/default-img.jpg') }}">
+                                {{-- <img src="{{ Asset('assets/images/default-img.jpg') }}"> --}}
                                 <div class="card-body">
                                     <p class="card-text">Name : {{ $item->name ?? '-' }}</p>
                                     <div class="d-flex justify-content-between">
@@ -53,11 +52,17 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="btn-group">
                                             <a href="{{ route('novel.show', $item->id) }}"
-                                                class="btn btn-sm btn-outline-secondary">View
+                                                class="btn btn-sm btn-outline-primary">All
+                                            </a>
+                                            <a href="{{ route('chapters', $item->id) }}"
+                                                class="btn btn-sm btn-outline-success">Chapter
                                             </a>
                                         </div>
-                                        <small
-                                            class="text-body-secondary">{{ $item->updated_at }}</small>
+
+                                        <small class="text-body-secondary"> <span
+                                                class="badge rounded-pill text-bg-success">Last Update</span>
+                                            {{ Arr::get($item, 'chapter_latest.created_at') }} | <b
+                                                class="text-success">{{ Arr::get($item, 'chapter_latest.chapter') }}</b></small>
                                     </div>
                                 </div>
                             </div>

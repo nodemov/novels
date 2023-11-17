@@ -84,12 +84,22 @@ Route::get('novels/{id}', function ($id, Request $request) {
 })->name('novel.show');
 
 Route::get('novels', function () {
-    $novels = Novel::withCount('chapters')->get();
+    $novels = Novel::withCount('chapters')->with('chapter_latest:novel_id,chapter,created_at')->lazy();
 
     // return $novels;
     return view('novels', compact('novels'));
 })->name('novels');
 
+
+Route::get('novels/{novel_id}/chapters', function ($novel_id) {
+    $novel = Novel::find($novel_id);
+    $chapters = Chapter::with('novel:id,name')
+        ->select(['id', 'novel_id', 'chapter', 'title', 'is_read', 'created_at'])
+        ->where("novel_id", $novel_id)->orderBy('chapter', "DESC")
+        ->paginate(20);
+
+    return view('chapter', compact('novel', 'chapters'));
+})->name('chapters');
 
 Route::get('novels/get', function () {
     $chapters = Chapter::where('id', 8646)->get();
@@ -101,7 +111,6 @@ Route::get('clear', function () {
     Artisan::call('view:clear');
     Artisan::call('config:clear');
 
-    // Artisan::call('view:cache');
     Artisan::call('config:cache');
 
     return "Cache is cleared and view:cache config:cache";

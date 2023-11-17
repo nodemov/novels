@@ -13,11 +13,12 @@ class Chapter extends Model
         'novel_id',
         'chapter',
         'title',
-        'content'
+        'content',
+        'is_read'
     ];
 
     public function novel()
     {
-        return $this->belongsTo(Novel::class);
+        return $this->belongsTo(Novel::class, 'novel_id', 'id');
     }
 }

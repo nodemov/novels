@@ -15,8 +15,20 @@ class Novel extends Model
         'slug',
     ];
 
+    protected $hidden = [
+        "slug",
+        "image",
+        "created_at",
+        "updated_at"
+    ];
+
     public function chapters()
     {
-        return $this->hasMany(Chapter::class, 'novel_id', 'id')->orderBy('chapters.chapter','asc');
+        return $this->hasMany(Chapter::class, 'novel_id', 'id')->orderBy('chapters.chapter', 'asc');
+    }
+
+    public function chapter_latest()
+    {
+        return $this->belongsTo(Chapter::class, 'id', 'novel_id');
     }
 }
