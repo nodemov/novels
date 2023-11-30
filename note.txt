@@ -1,0 +1,6 @@
+// Route::get('novels', function () {
+//     $novels = Novel::withCount('chapters')->with('chapter_latest:novel_id,chapter,created_at')->lazy();
+//     // return $novels;
+//     return view('novels', compact('novels'));
+// })->name('novels');
+

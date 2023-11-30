@@ -1,14 +1,81 @@
 <?php
 
-use App\Models\Chapter;
+use App\Models\User;
 use App\Models\Novel;
+use App\Models\Chapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\ProfileController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
 Route::get('/', function () {
-    return ['status' => false, 'message' => "Is commimg"];
+    return redirect()->route('login');
 });
+
+Route::get('/dashboard', function () {
+    $novels = Novel::withCount('chapters')->with('chapter_latest:novel_id,chapter,created_at')->lazy();
+    return view('dashboard', compact('novels'));
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('novels/{id}', function ($id, Request $request) {
+        $chapters = Chapter::where('novel_id', $id)
+            ->when(request()->start, function ($q) use ($request) {
+                $q->where('chapter', '>=', $request->start);
+            })
+            ->when(request()->end, function ($q) use ($request) {
+                $q->where('chapter', '<=', $request->end);
+            })
+            ->orderBy('chapter')
+            ->orderBy('id')
+            ->paginate(20)
+            ->withQueryString();
+
+        if ($request->title) {
+            $showTitle = true;
+        } else {
+            $showTitle = false;
+        }
+
+        // return $chapters;
+        return view('novel', compact('chapters', 'showTitle'));
+    })->name('novel.show');
+
+    Route::get('novels/{novel_id}/chapters', function ($novel_id) {
+        $novel = Novel::find($novel_id);
+        $chapters = Chapter::with('novel:id,name')
+            ->select(['id', 'novel_id', 'chapter', 'title', 'is_read', 'created_at'])
+            ->where("novel_id", $novel_id)->orderBy('chapter', "DESC")
+            ->paginate(20);
+
+        return view('chapter', compact('novel', 'chapters'));
+    })->name('chapters');
+
+    Route::get('clear', function () {
+        Artisan::call('cache:clear');
+        Artisan::call('view:clear');
+        Artisan::call('config:clear');
+        Artisan::call('config:cache');
+
+        return "Cache is cleared and view:cache config:cache";
+    });
+});
+
 
 Route::get('url', function () {
     return view('url');
@@ -60,64 +127,4 @@ Route::get('get_novel', function () {
     return ["status" => " เพิ่มสำเร็จ"];
 });
 
-Route::get('novels/{id}', function ($id, Request $request) {
-    $chapters = Chapter::where('novel_id', $id)
-        ->when(request()->start, function ($q) use ($request) {
-            $q->where('chapter', '>=', $request->start);
-        })
-        ->when(request()->end, function ($q) use ($request) {
-            $q->where('chapter', '<=', $request->end);
-        })
-        ->orderBy('chapter')
-        ->orderBy('id')
-        ->paginate(20)
-        ->withQueryString();
-
-    if ($request->title) {
-        $showTitle = true;
-    } else {
-        $showTitle = false;
-    }
-
-    // return $chapters;
-    return view('novel', compact('chapters', 'showTitle'));
-})->name('novel.show');
-
-Route::get('novels', function () {
-    $novels = Novel::withCount('chapters')->with('chapter_latest:novel_id,chapter,created_at')->lazy();
-
-    // return $novels;
-    return view('novels', compact('novels'));
-})->name('novels');
-
-
-Route::get('novels/{novel_id}/chapters', function ($novel_id) {
-    $novel = Novel::find($novel_id);
-    $chapters = Chapter::with('novel:id,name')
-        ->select(['id', 'novel_id', 'chapter', 'title', 'is_read', 'created_at'])
-        ->where("novel_id", $novel_id)->orderBy('chapter', "DESC")
-        ->paginate(20);
-
-    return view('chapter', compact('novel', 'chapters'));
-})->name('chapters');
-
-Route::get('novels/get', function () {
-    $chapters = Chapter::where('id', 8646)->get();
-    return view('novel', compact('chapters'));
-});
-
-Route::get('clear', function () {
-    Artisan::call('cache:clear');
-    Artisan::call('view:clear');
-    Artisan::call('config:clear');
-
-    Artisan::call('config:cache');
-
-    return "Cache is cleared and view:cache config:cache";
-});
-
-Route::get('optimize', function () {
-    Artisan::call('optimize:clear');
-
-    return "Cache is cache and config:cache";
-});
+require __DIR__ . '/auth.php';

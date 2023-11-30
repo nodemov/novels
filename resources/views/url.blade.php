@@ -18,6 +18,7 @@
     <p id="demo"></p>
 
 
+
     <script>
         const selectElement = document.querySelector('.selectpicker_chapter');
         const optionElements = selectElement.querySelectorAll('option');
