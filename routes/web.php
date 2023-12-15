@@ -23,6 +23,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('novels', function () {
+    return redirect()->route('dashboard');
+});
+
 Route::get('/dashboard', function () {
     $novels = Novel::withCount('chapters')->with('chapter_latest:novel_id,chapter,created_at')->lazy();
     return view('dashboard', compact('novels'));
@@ -82,13 +86,15 @@ Route::get('url', function () {
 });
 
 Route::get('get_novel', function () {
-    ini_set('max_execution_time', 300); //5 minutes
+    ini_set('max_execution_time', 600); //10 minutes
 
-    $urls = [];
+    $urls = [
+        ""
+    ];
 
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
-    $novel_id = 8;
+    $novel_id = 36;
 
     foreach ($urls as $url) {
         try {
@@ -98,8 +104,11 @@ Route::get('get_novel', function () {
             $crawler->filter('#chapter-heading')->each(function ($node) use ($chapter) {
                 $title_novel = $node->text();
                 $chapter->title = $title_novel;
+
                 $title_novel_arr = explode("ตอนที่ ", $title_novel);
                 // $title_novel_arr = explode("บทที่ ", $title_novel);
+                // $title_novel_arr = explode("EP. ", $title_novel);
+
                 $chapter_ch  = floatval(substr($title_novel_arr[1], 0, 8));
                 // dd($chapter_ch);
                 // dd($node->text());

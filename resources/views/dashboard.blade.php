@@ -10,9 +10,10 @@
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 @foreach ($novels as $item)
                     <div class="bg-white shadow-sm p-4 mb-4">
-                        {{-- <img src="{{ asset('assets/images/default-img.jpg') }}"> --}}
+                        <img class="mb-2" style="width:193px;height:278px"
+                            src="{{ Arr::get($item, 'image', asset('assets/images/default-img.jpg')) }}">
                         <div class="card-body">
-                            <p class="text-base font-black">Name: {{ $item->name ?? '-' }}</p>
+                            <p class="text-base font-black">{{ $item->name ?? '-' }}</p>
                             <div class="flex justify-between">
                                 <p class="text-base text-gray-800">Start: {{ $item->start ?? '-' }}</p>
                                 <p class="text-base text-gray-800">Now: {{ $item->now ?? '-' }}</p>
@@ -27,9 +28,7 @@
                                     <a href="{{ route('chapters', $item->id) }}"
                                         class="px-6 py-2 text-sm rounded shadow bg-cyan hover:bg-cyan-200 text-white"
                                         style="background-color:#22c55e">Chapter</a>
-
                                 </div>
-
                                 <small class="text-body-secondary">
                                     <span class="badge rounded-pill text-bg-success">Last Update</span>
                                     {{ Arr::get($item, 'chapter_latest.created_at') }} |
