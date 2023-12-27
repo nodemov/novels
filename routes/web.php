@@ -26,8 +26,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('novels/{id}', function ($id, Request $request) {
-        ($request->show) ? $show = (int) $request->show : $show = 20;
 
+        if ($request->show) {
+            $show = (int) $request->show;
+        } else {
+            $show = 20;
+        }
 
         $chapters = Chapter::where('novel_id', $id)
             ->when(request()->start, function ($q) use ($request) {
@@ -41,8 +45,17 @@ Route::middleware('auth')->group(function () {
             ->paginate($show)
             ->withQueryString();
 
-        ($request->title) ? $showTitle = true : $showTitle = false;
-        ($request->html) ? $showHtml = true : $showHtml = false;
+        if ($request->title) {
+            $showTitle = true;
+        } else {
+            $showTitle = false;
+        }
+
+        if ($request->html) {
+            $showHtml = true;
+        } else {
+            $showHtml = false;
+        }
 
         // return $chapters;
         return view('novel', compact('chapters', 'showTitle', 'showHtml'));
