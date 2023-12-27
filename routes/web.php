@@ -51,10 +51,8 @@ Route::middleware('auth')->group(function () {
             $showTitle = false;
         }
 
-        $showRaw = $request->html ? true : false;
-
         // return $chapters;
-        return view('novel', compact('chapters', 'showTitle', 'showRaw'));
+        return view('novel', compact('chapters', 'showTitle'));
     })->name('novel.show');
 
     Route::get('novels/{novel_id}/chapters', function ($novel_id) {
