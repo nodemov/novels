@@ -1,23 +1,11 @@
 <?php
 
-use App\Models\User;
 use App\Models\Novel;
 use App\Models\Chapter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ProfileController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -28,7 +16,7 @@ Route::get('novels', function () {
 });
 
 Route::get('/dashboard', function () {
-    $novels = Novel::withCount('chapters')->with('chapter_latest:novel_id,chapter,created_at')->lazy();
+    $novels = Novel::withCount('chapters')->with('chapter_latest:novel_id,chapter,created_at')->orderby('created_at', 'DESC')->lazy();
     return view('dashboard', compact('novels'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -95,7 +83,7 @@ Route::get('get_novel', function () {
 
     $urls =  array_reverse($urls);
     $duplicateEntry = [];
-    $novel_id = 40;
+    $novel_id = 56;
 
     foreach ($urls as $url) {
         try {
