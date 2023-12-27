@@ -76,6 +76,8 @@ Route::middleware('auth')->group(function () {
         Artisan::call('cache:clear');
         Artisan::call('view:clear');
         Artisan::call('config:clear');
+        Artisan::call('route:clear');
+
         Artisan::call('config:cache');
 
         return "Cache is cleared and view:cache config:cache";

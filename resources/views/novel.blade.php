@@ -28,7 +28,7 @@
                                     <p style="font-size: 14px">
                                         {{-- {{ substr($item->content,14) }} --}}
 
-                                        @if ($showHtml == true)
+                                        @if ($showHtml)
                                             {!! trim($item->content) !!}
                                         @else
                                             {{ trim($item->content) }}
