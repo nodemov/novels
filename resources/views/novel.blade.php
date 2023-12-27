@@ -27,7 +27,12 @@
                                     </h1>
                                     <p style="font-size: 14px">
                                         {{-- {{ substr($item->content,14) }} --}}
-                                        {{ trim($item->content) }}
+
+                                        @if ($showHtml == true)
+                                            {!! trim($item->content) !!}
+                                        @else
+                                            {{ trim($item->content) }}
+                                        @endif
                                     </p>
                                     <br>
                                 @endforeach
