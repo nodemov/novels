@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
         if ($request->show) {
             $show = (int) $request->show;
         } else {
-            $show = 20;
+            $show = 10;
         }
 
         $chapters = Chapter::where('novel_id', $id)
