@@ -27,12 +27,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('novels/{id}', function ($id, Request $request) {
 
-        if ($request->show) {
-            $show = (int) $request->show;
-        } else {
-            $show = 10;
-        }
-
         $chapters = Chapter::where('novel_id', $id)
             ->when(request()->start, function ($q) use ($request) {
                 $q->where('chapter', '>=', $request->start);
@@ -42,7 +36,7 @@ Route::middleware('auth')->group(function () {
             })
             ->orderBy('chapter')
             ->orderBy('id')
-            ->paginate($show)
+            ->paginate(10)
             ->withQueryString();
 
         if ($request->title) {
